@@ -4,10 +4,10 @@ import json
 import cgi
 import os.path
 import zipfile
-import ConfigParser
+import configparser
 
 # Globals
-parser = ConfigParser.ConfigParser()
+parser = configparser.ConfigParser()
 parser.read(u'config.ini')
 tableauurl = parser.get('Tableau', 'URL')
 login = parser.get('Tableau', 'login')
@@ -65,8 +65,8 @@ if response.status_code == 200:
         # check if the project folder exists in download location
         if not os.path.exists(foldername):
             os.mkdir(foldername)
-            print ""
-            print "Creating folder " + projectname
+            print("")
+            print("Creating folder " + projectname)
 
         workbookid = k["@id"]
         workbookname = k["@name"]
@@ -83,13 +83,13 @@ if response.status_code == 200:
             ct = response.headers.get("Content-Type")
 
             if os.path.exists(workbook):
-                print "Deleting workbook " + workbook
+                print("Deleting workbook " + workbook)
                 os.remove(workbook)
 
             # if the file is twbx
             if ct == "application/octet-stream":
-                print ""
-                print "Downloading twbx " + workbook
+                print("")
+                print("Downloading twbx " + workbook)
                 with open(workbook, "wb") as file:
                     for chunk in response.iter_content(chunk_size=1024):
                         if chunk:
@@ -99,7 +99,7 @@ if response.status_code == 200:
             # else file is twb
             elif ct == "application/xml":
                 with open(workbook, 'w') as file:
-                    print ""
-                    print "Downloading twb " + workbook
-                    file.write(response.content)
+                    print("")
+                    print("Downloading twb " + workbook)
+                    file.write(response.text)
                     file.close()            
