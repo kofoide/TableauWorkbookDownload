@@ -4,10 +4,10 @@ import json
 import cgi
 import os.path
 import zipfile
-import ConfigParser
+import configparser
 
 # Globals
-parser = ConfigParser.ConfigParser()
+parser = configparser.ConfigParser()
 parser.read(u'config.ini')
 tableauurl = parser.get('Tableau', 'URL')
 login = parser.get('Tableau', 'login')
@@ -68,8 +68,8 @@ if response.status_code == 200:
         # check if the project folder exists in download location
         if not os.path.exists(foldername):
             os.mkdir(foldername)
-            print ""
-            print "Creating folder " + projectname
+            print("")
+            print("Creating folder " + projectname)
 
         workbookid = k["@id"]
         workbookname = k["@name"]
@@ -102,7 +102,7 @@ if response.status_code == 200:
 
                     for x in zip.namelist():
                         if '.twb' in str(x):
-                            print x
+                            print(x)
                             zip.extract(x, path=foldername)
                     zip.close()
 
@@ -111,5 +111,5 @@ if response.status_code == 200:
             # else file is twb
             elif ct == "application/xml":
                 with open(workbook, 'w') as file:
-                    file.write(response.content)
+                    file.write(response.text)
                     file.close()            
