@@ -5,23 +5,38 @@ import cgi
 import os.path
 import zipfile
 import configparser
+import shutil
 
 # Globals
 parser = configparser.ConfigParser()
 parser.read(u'config.ini')
-tableauurl = parser.get('Tableau', 'URL')
-login = parser.get('Tableau', 'login')
-password = parser.get('Tableau', 'password')
-sitename = parser.get('Tableau', 'sitename')
+
+configsection = 'Custom'
+
+tableauurl = parser.get(configsection, 'URL')
+login = parser.get(configsection, 'login')
+password = parser.get(configsection, 'password')
+sitename = parser.get(configsection, 'sitename')
+#patname = parser.get(configsection, 'patname')
+#pat = parser.get(configsection, 'pat')
+
 signinurl = tableauurl + '/api/2.4/auth/signin'
 workbooksurl = tableauurl + '/api/2.4/sites/@siteid/workbooks?pageSize=500'
 contenturlbase = tableauurl + '/api/2.4/sites/@siteid/workbooks/@workbookid/content?includeExtract=False'
-downloadfolder = parser.get('Tableau', 'downloadfolder')
+downloadfolder = parser.get(configsection, 'downloadfolder')
 
 payload = "{\"credentials\": {\"name\": \"@login\" ,\"password\": \"@password\",\"site\": {\"contentUrl\": \"@sitename\"}}}"
+#payload = "{\"credentials\": {\"personalAccessTokenName\": \"@patname\", \"personalAccessTokenSecret\": \"@pat\",\"site\": {\"contentUrl\": \"@sitename\"}}}"
 payload = payload.replace("@login", login)
 payload = payload.replace("@password", password)
 payload = payload.replace("@sitename", sitename)
+#payload = payload.replace("@patname", patname)
+#payload = payload.replace("@pat", pat)
+
+if os.path.exists(downloadfolder):
+    shutil.rmtree(downloadfolder)
+
+os.mkdir(downloadfolder)
 
 headers = {
     'Content-Type': "application/json",
